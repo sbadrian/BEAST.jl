@@ -53,7 +53,7 @@ MWHyperSingular(gamma)  = MWSingleLayer3D(gamma, 0, 1)
 
 
 
-export Maxwell3D
+export Maxwell3D, MWSingleLayer3DReg
 
 struct MWSingleLayer3DReg{T,U} <: MaxwellOperator3DReg
     gamma::T
@@ -65,6 +65,15 @@ struct MWSingleLayer3DSng{T,U} <: MaxwellOperator3D
     gamma::T
     α::U
     β::U
+end
+
+
+function momintegrals!(rop::MWSingleLayer3DReg, g, f, t, s, z, strat::SingularityExtractionRule)
+    
+  # compute the regular part
+  rstrat = regularpart_quadrule(strat)
+  momintegrals!(rop, g, f, t, s, z, rstrat)
+
 end
 
 scalartype(op::MaxwellOperator3D) = typeof(op.gamma)

@@ -7,7 +7,9 @@ end
 
 LinearAlgebra.cross(::NormalVector, a::MWDoubleLayer3D) = DoubleLayerRotatedMW3D(a.gamma)
 
-defaultquadstrat(::DoubleLayerRotatedMW3D, tfs, bfs) = DoubleNumQStrat(2,3)
+defaultquadstrat(::DoubleLayerRotatedMW3D, tfs::Space, bfs::Space) = DoubleNumQStrat(2,3)
+defaultquadstrat(::DoubleLayerRotatedMW3D, tfs::RefSpace, bfs::RefSpace) = DoubleNumQStrat(2,3)
+
 
 function quaddata(operator::DoubleLayerRotatedMW3D,
         local_test_basis::LinearRefSpaceTriangle, local_trial_basis::LinearRefSpaceTriangle,

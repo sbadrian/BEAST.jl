@@ -84,7 +84,9 @@ function (igd::MWDL3DIntegrand)(u,v)
             dot(f[3].value, G[3])))
 end
 
-kernel_in_bary(op::MWSingleLayer3D,
+const MWSLOperator3D = Union{MWSingleLayer3D, MWSingleLayer3DReg}
+
+kernel_in_bary(op::MWSLOperator3D,
     test_local_space::RTRefSpace, trial_local_space::RTRefSpace,
     test_chart, trial_chart) = MWSL3DIntegrand(
         test_chart, trial_chart, op, test_local_space, trial_local_space)
@@ -94,7 +96,8 @@ kernel_in_bary(op::MWDoubleLayer3D,
     test_chart, trial_chart) = MWDL3DIntegrand(
         test_chart, trial_chart, op, test_local_space, trial_local_space)
 
-const MWOperator3D = Union{MWSingleLayer3D, MWDoubleLayer3D}
+const MWOperator3D = Union{MWSingleLayer3D, MWDoubleLayer3D, MWSingleLayer3DReg}
+
 function momintegrals!(op::MWOperator3D,
     test_local_space::RTRefSpace, trial_local_space::RTRefSpace,
     test_triangular_element, trial_triangular_element, out, strat::SauterSchwabStrategy)

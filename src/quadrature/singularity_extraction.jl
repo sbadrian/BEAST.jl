@@ -21,3 +21,4 @@ function momintegrals!(op, g, f, t, s, z, strat::SingularityExtractionRule)
     end # next quadrature point
 
 end
+
