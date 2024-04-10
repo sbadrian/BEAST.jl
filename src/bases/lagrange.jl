@@ -242,7 +242,7 @@ the area so that overall the integral over the dual function is one.
 When `interpolatory=true` is used, the function value is one on the support, and thus,
 it gives rise to a partition of unity.
 """
-function duallagrangecxd0(mesh, jct=CompScienceMeshes.mesh(coordtype(mesh), dimension(mesh)-1); interpolatory=interpolatory)
+function duallagrangecxd0(mesh, jct=CompScienceMeshes.mesh(coordtype(mesh), dimension(mesh)-1); interpolatory=false)
     vertexlist = interior_and_junction_vertices(mesh, jct)
     duallagrangecxd0(mesh, vertexlist; interpolatory=interpolatory)
 end
