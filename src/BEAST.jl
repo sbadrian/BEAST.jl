@@ -284,6 +284,7 @@ include("helmholtz3d/helmholtz3d.jl")
 include("helmholtz3d/wiltonints.jl")
 
 include("helmholtz2d/hh2dexc.jl")
+include("helmholtz2d/hh2dnear.jl")
 include("helmholtz2d/hh2dops.jl")
 include("helmholtz2d/hh2dnear.jl")
 include("helmholtz2d/helmholtz2d.jl")

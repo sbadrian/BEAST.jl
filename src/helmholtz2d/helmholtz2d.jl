@@ -93,6 +93,19 @@ module Helmholtz2D
         return Mod.HH2DDirectedMonopole(position, direction, gamma, amplitude)
     end
 
+    function monopole(;
+        position=SVector(0.0, 0.0, 0.0),
+        gamma=nothing,
+        wavenumber=nothing,
+        amplitude=1.0
+    )
+
+        gamma, wavenumber = Mod.gamma_wavenumber_handler(gamma, wavenumber)
+        Mod.isstatic(gamma) && (gamma = zero(amplitude))
+
+        return Mod.HH2DMonopole(position, gamma, amplitude)
+    end
+
     function planewave(;
             direction=error("direction is a required argument"),
             gamma=nothing,

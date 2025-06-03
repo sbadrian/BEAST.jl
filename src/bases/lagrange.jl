@@ -977,10 +977,17 @@ end
 
 
 
-function lagrangecx(mesh::CompScienceMeshes.AbstractMesh{<:Any,3}; order)
+function lagrangecx(mesh::CompScienceMeshes.AbstractMesh; order)
 
     T = coordtype(mesh)
-    NF = binomial(2+order, 2)
+
+    if dimension(mesh) == 1
+        NF = 1 + order
+    elseif dimension(mesh) == 2
+        NF = binomial(2+order, 2)
+    else
+        error("We do not yet support tetrahedron")
+    end
     P = vertextype(mesh)
     S = Shape{T}
 
