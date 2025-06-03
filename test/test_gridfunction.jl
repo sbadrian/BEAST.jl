@@ -1,6 +1,5 @@
-@testitem "gridfunction" begin
-
-# using BEAST
+using BEAST
+using Test
 using CompScienceMeshes
 using StaticArrays
 using LinearAlgebra
@@ -119,4 +118,6 @@ gfc0Γ2 = BEAST.FEMFunction(coeffsΓ2, C0Γ2)
 ## Test mixed combinations
 @test BEAST.Lp_integrate(gfc0 + 1im * gfc0; p=1) ≈ sqrt(2) * 21
 
-end
+
+##
+# CompScienceMeshes.mesh_rectangle(1.0, 1.0, 1.0, 2)

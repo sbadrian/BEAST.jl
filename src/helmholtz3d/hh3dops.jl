@@ -90,10 +90,10 @@ struct HH3DDoubleLayerTransposedSng{T,K} <: Helmholtz3DOp{T,K}
 end
 
 defaultquadstrat(::Helmholtz3DOp, ::LagrangeRefSpace, ::LagrangeRefSpace) =
-    DoubleNumWiltonSauterQStrat(2,3,2,3,4,4,4,4)
+    DoubleNumWiltonSauterQStrat(TriangleQuadDunavant(8),TriangleQuadDunavant(9),TriangleQuadDunavant(8),TriangleQuadDunavant(9),13,13,13,13)
 
 defaultquadstrat(::Helmholtz3DOp, ::subReferenceSpace, ::subReferenceSpace) = 
-    DoubleNumWiltonSauterQStrat(4,7,4,7,4,4,4,4)
+    DoubleNumWiltonSauterQStrat(8,9,8,9,13,13,13,13)
 
 regularpart(op::HH3DHyperSingularFDBIO) = HH3DHyperSingularReg(op.alpha, op.beta, op.gamma)
 singularpart(op::HH3DHyperSingularFDBIO) = HH3DHyperSingularSng(op.alpha, op.beta, op.gamma)
