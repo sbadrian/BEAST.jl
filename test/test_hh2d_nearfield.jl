@@ -45,9 +45,9 @@ end
 ##
 #hs = [0.8, 0.4, 0.2, 0.1, 0.05, 0.025]
 
-hs = [1.0, 0.5, 0.25, 0.125]
+hs = [2.0, 1.0, 0.5]# 0.25, 0.125, 0.0625, 0.03125, 0.01562]
 
-orders = [0, 1]
+orders = [1, 2]
 
 accs = Dict()
 
@@ -64,7 +64,11 @@ for order in orders
 
         #k = 0.031415926535897934
 
-        X0 = BEAST.lagrangecx(square, order=order)
+        #X0 = BEAST.lagrangecx(square, order=order)
+        #X0 = BEAST.lagrangecxd0(square) # For comparison to zeroth order (discont.)
+        X0 = BEAST.lagrangec0(square, order=order, dirichlet=true)
+        #X0 = BEAST.lagrangec0d1(square, dirichlet=true) For comparison to linear order (cont.)
+        @show numfunctions(X0)
         #X1 = lagrangec0d1(square)
 
         S = Helmholtz2D.singlelayer(; gamma=im * k)
@@ -88,7 +92,7 @@ for order in orders
         gD0 = assemble(DirichletTrace(charge1), X0) + assemble(DirichletTrace(charge2), X0)
     
         # Interior Dirichlet problem - compare Sauter & Schwab eqs. 3.81
-        M_IDPSL = assemble(S, X0, X0) # Single layer (SL)
+        @time M_IDPSL = assemble(S, X0, X0) # Single layer (SL)
     
         ρ_IDPSL = M_IDPSL \ (-gD0)
 
@@ -113,11 +117,11 @@ plt = Plots.plot(
     ylabel="Relative error",
     legend=:bottomright,
     title="Manufactured solution for square (Helmholtz2D)",  linewidth=3)
-Plots.plot!(plt, hs, accs[0], label="Order 0", markershape=:circle)
-Plots.plot!(plt, hs, accs[1], label="Order 1", markershape=:square)
 
-
-
+for i in orders
+    Plots.plot!(plt, hs, accs[i], label="Order $i", markershape=:auto)
+end
+display(plt)
 ##
 
 hs = [0.8, 0.4, 0.2, 0.1]
@@ -178,7 +182,7 @@ end
 
 ##
 
-hs = [2.0, 1.0]
+hs = [2.0, 1.0, 0.5, 0.25]
 
 orders = [0, 1, 2, 3]
 
@@ -249,26 +253,5 @@ plt = Plots.plot(
 Plots.plot!(plt, hs, accs[0], label="Order 0", markershape=:circle)
 Plots.plot!(plt, hs, accs[1], label="Order 1", markershape=:square)
 Plots.plot!(plt, hs, accs[2], label="Order 2", markershape=:diamond)
+Plots.plot!(plt, hs, accs[3][1] .* hs.^5, label="h", markershape=:dtriangle)
 Plots.plot!(plt, hs, accs[3], label="Order 3", markershape=:utriangle)
-
-##
-using Makie
-
-# Sample data
-x = 10 .^ range(0, 2, length=100)  # from 1 to 100
-y1 = x .^ 2                       # y = x^2
-y2 = x .^ 0.5                     # y = sqrt(x)
-
-# Create figure and axis with log-log scaling
-fig = Figure()
-ax = Axis(fig[1, 1], xscale = log10, yscale = log10,
-          xlabel = "x", ylabel = "y", title = "Log-Log Plot")
-
-# Plot curves
-lines!(ax, x, y1, label = "x^2")
-lines!(ax, x, y2, label = "√x")
-
-# Optional: Add legend
-axislegend(ax, position = :rt)
-
-fig
