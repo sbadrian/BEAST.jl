@@ -20,19 +20,24 @@ end
     hh2d_makegammacomplexifneeded(gamma)
 
 Returns a complexified gamma. Unlike the 3D-case, the handling of the Green's
-function is more complicated as, for example, the static kernel is not the
-of the dynamic kernel limit for k → 0
+function is more complicated as, for example, the static kernel is not the limit
+of the dynamic kernel for k → 0
 
 First, recall that throughout BEAST, we assume a dependency of exp(+iωt).
 The wavenumber k and gamma are related via  γ = ik (and thus k = -iγ).
 Accordingly, the homogeneous 2D Helmholtz equation reads
     - Δu - k² u = - Δu + γ² u = 0
 
-For physically meaning full real gamma (i.e., γ >= 0), the solutions are
-real-valued. For this reason, we will use gamma and not k to deduce the
-underlying scalartype of the operator.
+For physically meaning full real gamma (i.e., γ >= 0), the solutions of
+the BIEs are real-valued. For this reason, we will use gamma and not k to 
+deduce the underlying scalartype of the operator.
 
-The Green's functions
+Note that if γ < 0 -- eventhough it is real valued -- the fundamental solution
+is no longer the modified Bessel function K, and instead we have to resort to
+the general solution, the Hankel function (i.e., we could use the Hankel function for
+γ > 0, but it is slower than then modified Bessel function)
+
+The Green's functions are:
 
 2D Laplace:
     G(x, y) = -1/(2π)* ln|x - y|
@@ -123,7 +128,8 @@ function kernelvals(biop::HelmholtzOperator2D{T, K}, tgeo, bgeo) where {T, K <: 
 
     # Even though the evaluation of the Hankel function delivers
     # in general a complex output (sole exception if wavenumber is purely imaginary)
-    # the Hankel function is evaluated much faster if the wavenumber is purely real
+    # the Hankel function is evaluated much faster if the wavenumber, and thus
+    # the argument of the Hankelfunction, is purely real
     if iszero(real(biop.gamma))
         k = imag(biop.gamma)
     else
@@ -187,7 +193,7 @@ function cellcellinteractions!(biop::HelmholtzOperator2D, tshs, bshs, tcell, bce
 
 end
 
-defaultquadstrat(op::HelmholtzOperator2D, tfs, bfs) = DoubleNumSauterQstrat(3,3,0,4,10,10)
+defaultquadstrat(op::HelmholtzOperator2D, tfs, bfs) = DoubleNumSauterQstrat(30,30,0,4,25,25)
 
 function quaddata(op::HelmholtzOperator2D,
     test_local_space::RefSpace, trial_local_space::RefSpace,
