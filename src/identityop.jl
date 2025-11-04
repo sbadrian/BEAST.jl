@@ -1,3 +1,4 @@
+import CompScienceMeshes: measure
 
 """
     Identity <: LocalOperator
@@ -98,7 +99,8 @@ end
 defaultquadstrat(::LocalOperator, ::LagrangeRefSpace{T,D1,2}, ::LagrangeRefSpace{T,D2,2}) where {T,D1,D2} = SingleNumQStrat(6)
 function quaddata(op::LocalOperator, g::LagrangeRefSpace{T,Deg,2} where {T,Deg},
     f::LagrangeRefSpace, tels::Vector, bels::Vector, qs::SingleNumQStrat)
-    U = typeof(tels[1].volume)
+    #U = typeof(tels[1].volume)
+    U = typeof(measure(tels[1]))   # works for straight and curvilinear charts
     u, w = legendre(qs.quad_rule, 0.0, 1.0)
     qd = [(w[i],u[i]) for i in eachindex(w)]
     A = _alloc_workspace(Tuple{U,U}.(qd), g, f, tels, bels)
@@ -130,8 +132,8 @@ end
 # support(::LinearRefSpaceTriangle) = TriangleSupport()
 # support(::LinearRefSpaceTetr) = TetraSupport()
 
-defaultquadstrat(::LocalOperator, ::GWPDivRefSpace{<:Real,D1},
-    ::GWPDivRefSpace{<:Real,D2}) where {D1,D2} = SingleNumQStrat(9)
+#defaultquadstrat(::LocalOperator, ::GWPDivRefSpace{<:Real,D1},
+#    ::GWPDivRefSpace{<:Real,D2}) where {D1,D2} = SingleNumQStrat(9)
 
 
 # function quaddata(op::LocalOperator, g::GWPDivRefSpace, f::GWPDivRefSpace,

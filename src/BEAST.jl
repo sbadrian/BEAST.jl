@@ -15,8 +15,6 @@ using FastGaussQuadrature
 using LinearMaps
 using LiftedMaps
 
-#using TimerOutputs
-
 using AbstractTrees
 using NestedUnitRanges
 
@@ -32,7 +30,7 @@ export dot
 
 export planewave
 export RefSpace, numfunctions, coordtype, scalartype, assemblydata, geometry, refspace, valuetype
-export lagrangecxd0, lagrangec0d1, duallagrangec0d1, lagrangec0d2, unitfunctioncxd0, unitfunctionc0d1
+export lagrangecxd0, lagrangec0d1, duallagrangec0d1, unitfunctioncxd0, unitfunctionc0d1
 export duallagrangecxd0
 export lagdimension
 export restrict
@@ -69,11 +67,6 @@ export HH3DDoubleLayerNear
 export HH3DDoubleLayerTransposedNear
 export HH3DHyperSingularNear
 
-export HH2DSingleLayerNear
-export HH2DDoubleLayerNear
-export HH2DDoubleLayerTransposedNear
-export HH2DHyperSingularNear
-
 export NitscheHH3
 export MWSingleLayerTDIO
 export MWDoubleLayerTDIO
@@ -92,7 +85,6 @@ export DoubleLayerRotatedMW3D, MWDoubleLayerRotatedFarField3D
 export MWSingleLayerPotential3D
 
 export VIEOperator
-export VSIEOperator
 
 export gmres
 export @hilbertspace, @varform, @discretise
@@ -130,8 +122,15 @@ export ScalarTrace
 export PlaneWaveDirichlet
 export PlaneWaveNeumann
 
+# 2D near-field operators
+export HH2DSingleLayerNear
+export HH2DDoubleLayerNear
+export HH2DDoubleLayerTransposedNear
+export HH2DHyperSingularNear
+export HH2DNear
+export TangentTrace
+
 struct NormalVector end
-struct TangentVector end
 
 using CompScienceMeshes
 using Combinatorics
@@ -147,6 +146,7 @@ include("utils/linearspace.jl")
 include("utils/zeromap.jl")
 include("utils/rank1map.jl")
 include("utils/lagpolys.jl")
+
 include("utils/butchertableau.jl")
 include("utils/variational.jl")
 
@@ -197,9 +197,6 @@ include("bases/stagedtimestep.jl")
 include("bases/timebasis.jl")
 include("bases/tensorbasis.jl")
 
-include("bases/composedbasis.jl")
-include("bases/local/localcomposedbasis.jl")
-
 include("operator.jl")
 
 include("quadrature/strategies/quadstrat.jl")
@@ -215,7 +212,6 @@ include("quadrature/strategies/cfcvsautercewiltonpdnumqstrat.jl")
 include("quadrature/strategies/testrefinestrialqstrat.jl")
 include("quadrature/strategies/trialrefinestestqstrat.jl")
 include("quadrature/strategies/nonconftestbaryrefoftrialqstrat.jl")
-include("quadrature/strategies/timedomain/nothingqstrat.jl")
 
 
 include("excitation.jl")
@@ -235,12 +231,6 @@ include("quadrature/SauterSchwabQuadrature1D.jl")
 include("quadrature/sauterschwabints.jl")
 
 #include("quadrature/rules/sauterschwab_edgechart_1d.jl")
-
-if isdefined(CompScienceMeshes, :EdgeChart)
-    include("quadrature/rules/sauterschwab_edgechart_1d.jl")
-else
-    @info "BEAST: EdgeChart not found in CompScienceMeshes — skipping legacy EdgeChart 1D rules."
-end
 
 include("quadrature/nonconformingoverlapqrule.jl")
 include("quadrature/nonconformingtouchqrule.jl")
@@ -264,6 +254,7 @@ include("quadrature/strategies/timedomain/excitation/numspacenumtimeqstrat.jl")
 
 include("quadrature/rules/timedomain/excitation/multiquadqrule.jl")
 include("quadrature/rules/timedomain/excitation/singlequad2qrule.jl")
+include("quadrature/strategies/timedomain/nothingqstrat.jl")
 
 # Support for Maxwell equations
 include("maxwell/mwexc.jl")
@@ -272,9 +263,6 @@ include("maxwell/qlmwops.jl")
 
 include("maxwell/nxdbllayer.jl")
 include("maxwell/wiltonints.jl")
-include("maxwell/sauterschwabints_bdm_rt.jl")
-#include("maxwell/sauterschwabints_rt.jl")
-#include("maxwell/sauterschwabints_bdm.jl")
 include("maxwell/nitsche.jl")
 include("maxwell/farfield.jl")
 include("maxwell/spotential.jl")
@@ -293,7 +281,6 @@ include("helmholtz3d/helmholtz3d.jl")
 include("helmholtz3d/wiltonints.jl")
 
 include("helmholtz2d/hh2dexc.jl")
-include("helmholtz2d/hh2dnear.jl")
 include("helmholtz2d/hh2dops.jl")
 include("helmholtz2d/hh2dnear.jl")
 include("helmholtz2d/helmholtz2d.jl")
@@ -303,10 +290,7 @@ include("volumeintegral/vie.jl")
 include("volumeintegral/vieexc.jl")
 include("volumeintegral/vieops.jl")
 include("volumeintegral/farfield.jl")
-include("volumeintegral/vsie.jl")
-include("volumeintegral/vsieops.jl")
 include("volumeintegral/sauterschwab_ints.jl")
-
 
 include("decoupled/dpops.jl")
 include("decoupled/potentials.jl")
@@ -319,19 +303,17 @@ include("maxwell/timedomain/mwtdops.jl")
 include("maxwell/timedomain/mwtdexc.jl")
 include("maxwell/timedomain/tdfarfield.jl")
 
+#include("utils/butchertableau.jl")
+#include("utils/variational.jl")
 
 include("solvers/solver.jl")
 include("solvers/lusolver.jl")
 include("solvers/itsolver.jl")
-include("solvers/gmres.jl")
 
 include("utils/plotlyglue.jl")
 
-include("composedoperators/composedoperator.jl")
-include("composedoperators/displacementmesh.jl")
-include("composedoperators/potentials.jl")
-include("composedoperators/trace.jl")
-include("composedoperators/analytic_excitation.jl")
+
+
 
 const x̂ = point(1, 0, 0)
 const ŷ = point(0, 1, 0)
@@ -340,8 +322,5 @@ export x̂, ŷ, ẑ
 
 const n = NormalVector()
 export n
-
-export TangentTrace
-#const to = TimerOutput()
 
 end # module

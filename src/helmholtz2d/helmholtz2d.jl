@@ -66,6 +66,7 @@ module Helmholtz2D
         return Mod.HH2DHyperSingularFDBIO(alpha, beta, gamma)
     end
 
+    #=
     function monopole(;
         position=SVector(0.0, 0.0),
         gamma=nothing,
@@ -78,6 +79,7 @@ module Helmholtz2D
 
         return Mod.HH2DMonopole(position, gamma, amplitude)
     end
+    =#
 
     function directedmonopole(;
         position=SVector(0.0, 0.0),
