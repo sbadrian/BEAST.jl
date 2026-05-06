@@ -270,8 +270,8 @@ function quadrule(op::HelmholtzOperator2D, g::LagrangeRefSpace, f::LagrangeRefSp
     hits == 1 && return BEAST.SauterSchwabQuadrature1D.CommonVertex(qd.marokhlinwandura[1], qd.gausslegendre[1])
 
     return DoubleQuadRule(
-        qd.tpoints[1, i],
-        qd.bpoints[1, j],
+        qd.tpoints[1,i],
+        qd.bpoints[1,j],
     )
 end
 
