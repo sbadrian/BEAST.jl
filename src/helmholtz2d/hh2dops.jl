@@ -270,7 +270,83 @@ function quadrule(op::HelmholtzOperator2D, g::LagrangeRefSpace, f::LagrangeRefSp
     hits == 1 && return BEAST.SauterSchwabQuadrature1D.CommonVertex(qd.marokhlinwandura[1], qd.gausslegendre[1])
 
     return DoubleQuadRule(
-        qd.tpoints[1,i],
-        qd.bpoints[1,j],
+        qd.tpoints[1, i],
+        qd.bpoints[1, j],
     )
+end
+
+function quaddata(op::HelmholtzOperator2D,
+    test_local_space::RefSpace, trial_local_space::RefSpace,
+    test_charts, trial_charts, qs::DoubleNumSauterTellesQstrat)
+
+    T = coordtype(test_charts[1])
+
+    tqd = quadpoints(test_local_space, test_charts, (qs.outer_rule,))
+    bqd = quadpoints(trial_local_space, trial_charts, (qs.inner_rule,))
+
+    leg = (
+        convert.(NTuple{2,T}, _legendre(qs.sauter_schwab_common_vert, 0, 1)),
+        convert.(NTuple{2,T}, _legendre(qs.sauter_schwab_common_edge, 0, 1))
+    )
+
+    tel = (
+        convert.(NTuple{2,T}, _legendre(qs.telles_inner_rule, 0, 1)),
+        convert.(NTuple{2,T}, _legendre(qs.telles_outer_rule, 0, 1))
+    )
+
+    mrw = (
+        convert.(NTuple{2,T}, BEAST.SauterSchwabQuadrature1D._MRWrules(qs.sauter_schwab_common_vert, 0, 1)),
+        convert.(NTuple{2,T}, BEAST.SauterSchwabQuadrature1D._MRWrules(qs.sauter_schwab_common_edge, 0, 1))
+    )
+
+    return (tpoints=tqd, bpoints=bqd, gausslegendre=leg, telles=tel, marokhlinwandura=mrw)
+end
+
+function quadrule(op::HelmholtzOperator2D, g::LagrangeRefSpace, f::LagrangeRefSpace,
+    i, τ::CompScienceMeshes.Simplex{<:Any,1},
+    j, σ::CompScienceMeshes.Simplex{<:Any,1},
+    qd, qs::DoubleNumSauterTellesQstrat)
+    max_angle_deg = 12
+    hits = _numhits(τ, σ)
+    @assert hits <= 2
+    if hits == 1
+        α = acos((τ.tangents ⋅ σ.tangents) / norm(τ.tangents) * norm(σ.tangents))
+        if α * (180 / π) > max_angle_deg
+            return BEAST.SauterSchwabQuadrature1D.CommonVertex(qd.marokhlinwandura[1], qd.gausslegendre[1])
+        else
+            return BEAST.TellesQuadrature1D.TellesStrategy1D(qd.telles[2], qd.telles[1])
+        end
+    elseif hits == 2
+        return BEAST.SauterSchwabQuadrature1D.CommonEdge(qd.marokhlinwandura[2], qd.gausslegendre[2])
+    else
+        refpoint1 = σ.vertices[1]
+        refpoint2 = σ.vertices[2]
+        nΔ = (getnormaldist(τ, refpoint1) + getnormaldist(τ, refpoint2)) / 2 / τ.volume
+        if nΔ <= 0.4
+            return BEAST.TellesQuadrature1D.TellesStrategy1D(qd.telles[2], qd.telles[1])
+        end
+    end
+    #hits == 2 && return BEAST.SauterSchwabQuadrature1D.CommonEdge(qd.marokhlinwandura[2], qd.gausslegendre[2])
+    #hits == 1 && return BEAST.SauterSchwabQuadrature1D.CommonVertex(qd.marokhlinwandura[1], qd.gausslegendre[1])
+
+    return DoubleQuadRule(
+        qd.tpoints[1, i],
+        qd.bpoints[1, j],
+    )
+end
+function getnormaldist(τ, refpoint)
+    L = volume(τ)
+    η_tilde = normalize(τ.tangents[1])
+    nullpoint = cartesian(neighborhood(τ, 0.0))
+    onepoint = cartesian(neighborhood(τ, 1.0))
+    𝒹_tilde = refpoint - nullpoint
+    u_star = dot(η_tilde, 𝒹_tilde) / L
+    if u_star > 1
+        return Dist = norm(refpoint - onepoint)
+    elseif u_star < 0
+        return Dist = norm(refpoint - nullpoint)
+    else
+        T = nullpoint + η_tilde * L * u_star
+        return Dist = norm(refpoint - T)
+    end
 end
