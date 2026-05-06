@@ -14,8 +14,11 @@ using Test
     P2 = SVector(ℒ, 0.0)
     P3 = SVector(P1[1] + 0.25 * ℒ, P1[2] + 𝒹)
     P4 = SVector(P2[1] + 0.25 * ℒ, P2[2] + 𝒹)
-    vertices = SVector(P1, P2, P3, P4)
-    faces = SVector(SVector(1, 2), SVector(3, 4))
+    vertices = [P1, P2, P3, P4]
+
+    el1 = CompScienceMeshes.SimplexGraph{2}(index(1,2))
+    el2 = CompScienceMeshes.SimplexGraph{2}(index(3,4))
+    faces = [el1, el2]
     tstmesh = Mesh(vertices, faces)
     X01 = lagrangecxd0(tstmesh)
     function referencestat(l::Float64, y::SVector)
@@ -51,8 +54,14 @@ using Test
         P4 = SVector(P6[1], P6[2] + 𝒹)
         P2 = SVector(P1[1] - (𝒹 * 0.5 / tan(α / 2)), P1[2] + 𝒹 / 2)
         P5 = SVector(P6[1] + (𝒹 * 0.5 / tan(α / 2)), P6[2] + 𝒹 / 2)
-        vertices = SVector(P1, P2, P3, P4, P5, P6)
-        faces = SVector(SVector(1, 2), SVector(2, 3), SVector(3, 4), SVector(4, 5), SVector(5, 6), SVector(6, 1))
+        vertices = [P1, P2, P3, P4, P5, P6]
+        el1 = CompScienceMeshes.SimplexGraph{2}(index(1,2))
+        el2 = CompScienceMeshes.SimplexGraph{2}(index(2,3))
+        el3 = CompScienceMeshes.SimplexGraph{2}(index(3,4))
+        el4 = CompScienceMeshes.SimplexGraph{2}(index(4,5))
+        el5 = CompScienceMeshes.SimplexGraph{2}(index(5,6))
+        el6 = CompScienceMeshes.SimplexGraph{2}(index(6,1))
+        faces = [el1, el2, el3, el4, el5, el6]
         M = Mesh(vertices, faces)
         return M
     end
