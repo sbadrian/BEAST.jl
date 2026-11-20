@@ -54,6 +54,16 @@ function gradient(X::DirectProductSpace{T}) where T
 end
 
 
+"""
+    gradient(X)
+
+Compute the gradient of a finite element basis. For continuous piecewise linear
+Lagrange functions (`lagrangec0d1`), the gradients are piecewise constant:
+on segments, a `LagrangeBasis` of degree 0; on triangles, an `NDBasis`; on
+tetrahedra, an `NDLCCBasis`. In the two latter cases, they are combinations of
+the lowest-order Nédélec functions. As for `curl`, the resulting functions can
+be linearly dependent (constants have zero gradient).
+"""
 function gradient(x::Space)
     ref = refspace(x)
     geo = geometry(x)

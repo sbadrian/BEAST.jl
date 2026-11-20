@@ -1,5 +1,11 @@
 
 
+"""
+    RTBasis
+
+Lowest-order Raviart-Thomas (div-conforming edge) functions on a triangle mesh, see
+`raviartthomas`. `ttrace` of an `NDLCCBasis` is an `RTBasis`.
+"""
 mutable struct RTBasis{T,M,P} <: Space{T}
   geo::M
   fns::Vector{Vector{Shape{T}}}

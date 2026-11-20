@@ -1,3 +1,8 @@
+"""
+    NDBasis
+
+Lowest-order Nédélec (edge) functions on a triangle mesh, see `nedelec`.
+"""
 struct NDBasis{T,M,P} <: Space{T}
     geo::M
     fns::Vector{Vector{Shape{T}}}
@@ -9,6 +14,24 @@ NDBasis(geo, fns) = NDBasis(geo, fns, Vector{vertextype(geo)}(undef,length(fns))
 refspace(s::NDBasis) = NDRefSpace{scalartype(s)}()
 
 
+"""
+    nedelec(surface, edges=skeleton(surface, 1))
+
+The lowest-order Nédélec functions of the first kind (curl-conforming edge functions) on
+a triangle mesh `surface`, one per cell of the mesh of segments `edges`, which must
+share the vertices of `surface`. Each function is supported on the triangles adjacent to
+its edge, has a continuous tangential component across the edge, and has circulation
+∫ f ⋅ t ds = +1 along its edge, oriented from the first to the second vertex of the
+cell in `edges`, and 0 along all other edges.
+
+On triangles in 3D, the functions are tangential to the triangles, and their `curl` is
+the normal component n ⋅ ∇ × f, with the normal of each triangle. On triangles with 2D
+coordinates, the functions are those of the same triangles in the plane z = 0, oriented
+with normal ẑ, and the curl is ẑ ⋅ ∇ × f.
+
+For a tetrahedral mesh, `nedelec(mesh, edges)` returns the volume functions of
+`nedelecc3d`.
+"""
 function nedelec(surface, edges=skeleton(surface,1))
 
     T = coordtype(surface)

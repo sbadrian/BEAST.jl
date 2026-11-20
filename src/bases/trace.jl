@@ -193,9 +193,7 @@ function strace(X::Space, γ, dim1::Type{Val{3}})
 
 end
 
-"""
-currently not working!
-"""
+# Currently not working:
 # function ttrace(X::Space, γ)
 #
 #     x = refspace(X)
@@ -249,6 +247,24 @@ currently not working!
 # end
 
 
+"""
+    ttrace(X::Space, γ)
+
+The tangential trace of the functions `X` on `γ`, a mesh of faces on the boundary of
+`geometry(X)`. The result is a space on the faces of `boundary(geometry(X))` that overlap
+`γ`, with one function per function of `X`, in the same order; functions of `X` that
+vanish on `γ` have no shapes.
+
+  - For an `NDLCCBasis` (edge functions on tetrahedra), the trace is the
+    rotated tangential component n × f, with n the normal that points out of the
+    volume, as an `RTBasis`.
+  - For an `NDLCDBasis` (face functions on tetrahedra), the result is an
+    `NDBasis`, but it is not correct for functions that do not vanish on the
+    boundary.
+
+The functions of the trace are lists of shapes of the reference space of the result;
+they are not reduced to a basis of the trace space.
+"""
 function ttrace(X::Space, γ)
 
     x = refspace(X)

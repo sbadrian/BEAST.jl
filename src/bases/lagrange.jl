@@ -35,6 +35,18 @@ LAGRANGE SPACES
 ====#
 
 lagrangecxd0(mesh) = lagrangecx(mesh; order=0)
+"""
+    lagrangec0d1(mesh; dirichlet=false)
+    lagrangec0d1(mesh, neumann)
+
+Continuous piecewise linear Lagrange functions on `mesh`, one per vertex: the function
+of a vertex is 1 there and 0 at all other vertices. With `dirichlet=true`, the vertices
+on the boundary of `mesh` get no function, so all functions vanish on the boundary.
+
+On a triangle mesh, the second form keeps the functions of the boundary vertices in the
+interior of the part `neumann` of the boundary (a mesh of segments), and drops those of
+all other boundary vertices.
+"""
 lagrangec0d1(mesh; dirichlet=false) = lagrangec0(mesh; dirichlet=dirichlet, order=1)
 lagrangec0d2(mesh; dirichlet=false) = lagrangec0(mesh; dirichlet=dirichlet, order=2)
 

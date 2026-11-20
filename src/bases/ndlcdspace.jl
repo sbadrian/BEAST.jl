@@ -1,3 +1,11 @@
+"""
+    NDLCDBasis
+
+Lowest-order Nédélec functions of the second family on a tetrahedral mesh, i.e.
+div-conforming face functions (Raviart-Thomas in 3D), one per face; see
+`nedelecd3d(mesh, faces=skeleton(mesh, 2))`. The curl of an `NDLCCBasis` is an
+`NDLCDBasis`.
+"""
 mutable struct NDLCDBasis{T,M,P} <: Space{T}
     geo::M
     fns::Vector{Vector{Shape{T}}}

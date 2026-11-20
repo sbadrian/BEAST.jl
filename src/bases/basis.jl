@@ -142,6 +142,15 @@ AbstractTrees.children(x::DirectProductSpace) = x.factors
 Base.iterate(x::DirectProductSpace) = iterate(x.factors)
 Base.iterate(x::DirectProductSpace, state) = iterate(x.factors, state)
 
+"""
+    Shape(cellid, refid, coeff)
+
+The restriction of a global basis function to one cell: `coeff` times the local
+(reference) function `refid` of cell `cellid` of the geometry. A function of a `Space`
+is the list of its shapes, `space.fns[i]`; for lowest-order Nédélec and Raviart-Thomas
+functions, `refid` is the local index of the edge or face, as returned by
+`CompScienceMeshes.relorientation`, and `coeff` is ±1.
+"""
 struct Shape{T}
   cellid::Int
   refid::Int
