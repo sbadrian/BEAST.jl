@@ -22,7 +22,9 @@ function (ϕ::NDRefSpace)(nbd::CompScienceMeshes.MeshPointNM{T,C,D,2}) where {T,
 
     d = 2/j
 
-    rotate_left(t) = StaticArrays.SVector{2, Float64}(t[2], -t[1])
+    # Counter-clockwise by 90°, i.e. ẑ × t, so that the functions equal those on a
+    # triangle in 3D with normal ẑ, and agree with their curl, d = 2/j
+    rotate_left(t) = StaticArrays.SVector(-t[2], t[1])
 
     return SVector((
         (value = rotate_left(tu*(u-1) + tv*v    ) / j, curl = d),
